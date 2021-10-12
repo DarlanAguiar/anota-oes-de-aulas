@@ -1,0 +1,277 @@
+@charset "utf-8";
+
+body {
+    font-family: 'Montserrat', sans-serif;
+}
+
+header {
+    background-color: #bbbbbb;
+    padding: 20px 0;
+}
+
+.caixa {
+    position: relative;
+    width: 940px;
+    margin: 0 auto;
+}
+
+nav {
+    position: absolute;
+    top: 110px;
+    right: 0;
+}
+
+nav li {
+    display: inline;
+    margin: 0, 0, 0, 0;
+}
+
+
+nav a {
+    /* letras em maiúsculas */
+    text-transform: uppercase;
+    color: #000000;
+    font-weight: bold;
+    font-size: 22px;
+    /* tira formataçao do link(letraroxa e sublinhada) */
+    text-decoration: none;
+    padding-bottom: 3px;
+    margin-right: 5px;
+    transition: 0.3s;
+}
+
+nav a:hover {
+   
+    color: #c78c19;
+    
+    text-shadow: 1px 1px 1px white;
+    background-color: rgba(0, 0, 0, 0.199);
+    border-radius: 3px;
+}
+
+.banner {
+    width: 100%;
+}
+
+
+.tituloPrincipal {
+    text-align: center;
+    font-size: 2em;
+    margin: 0 0 1em;
+/*limpa efeito do texto em volta da figura  */
+    clear: left;
+
+}
+
+.tituloPrincipal::first-letter {
+    font-weight: 600;
+}
+
+/* adiciona caracctere antes do texto */
+.tituloPrincipal:before {
+    content: "[ ";    
+}
+
+/* adiciona caractere depois do texto */
+.tituloPrincipal:after {
+    content: " ]";
+}
+
+p {
+    text-indent: 30px;
+}
+
+.utensilios {
+    /* tamanho da figura */
+    width: 120px;
+/* efeito texto en volta da figuta */
+    float: left;
+    margin: 0 20px 20px;
+}
+
+.principal {
+    background-color: #fefefe;
+    padding: 20px 0;
+    width: 940px;
+    margin: 0 auto;
+}
+
+.principal p {
+    margin: 0 0 1em;
+}
+
+.principal strong {
+    font-weight: bold;
+}
+
+.principal em {
+    font-style: italic;
+}
+
+.mapa {
+    padding: 20px 0;
+    background: linear-gradient(180deg, #fefefe, #888888 );
+}
+
+.mapaConteudo {
+    width: 940px;
+    margin: 0 auto;
+
+}
+
+.mapa p {
+    text-align: center;
+    margin: 0 0 20px;
+}
+
+.beneficios {
+    padding: 20px 0;
+    background: #888888;
+}
+
+.conteudoBeneficios {
+    width: 640px;
+    margin:  0 auto;
+    
+}
+
+.listaBeneficios {
+
+    width: 38%;
+    display: inline-block;
+    vertical-align: top;
+}
+
+.imagemBeneficio {
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.363);
+    transition: 0.3s;
+    border-radius: 10px;
+}
+
+.imagemBeneficio:hover {
+    box-shadow: -4px -4px 4px  rgba(0, 0, 0, 0.363);
+    transform: scale(1.05);
+}
+
+.itens {
+    line-height: 1.5em;
+}
+
+/* de todos os itens pegue apenas o primeiro */
+.itens:first-child {
+    font-weight: 900;
+    
+}
+/* antes do texto adiciona caractere */
+.itens::before {
+    content: "✭";
+}
+
+.itens a {
+    text-decoration: none;
+    color: #000000;
+    transition: 0.3s;
+    /* transição antes do hover faz a ida e volta */
+}
+
+.itens a:hover {
+   
+    color: #c78c19;
+    text-shadow: 1px 1px 1px white;
+    background-color: rgba(0, 0, 0, 0.199);
+    border-radius: 3px;
+}
+
+.imagemBeneficio {
+    width: 60%;
+}
+
+.video {
+    width: 560px;
+    margin: 30px auto;
+    box-shadow: 4px 4px 4px rgba(0, 0, 0, 0.527);
+}
+
+footer {
+    text-align: center;
+    /* usa imagem de fundo, se a imagem é pequena ela se reproduz(repete) */
+    background: url(bg.jpg);
+    padding: 20px 0;
+}
+
+.direitos {
+    color: white;
+    font-size: 13px;
+    margin: 20px 0 0;
+}
+
+/* 
+altera todos os paragrafos dentro de main, independente de filho, neto, bisneto...
+main p {
+    background: red;
+}
+
+para mudar somente o filho direto.
+main > p {
+    background: red; 
+}
+
+Neste caso, usamos img como elemento âncora e para o primeiro irmão usamos o sinal de "+"
+muda só primeiro p apos a imagem.
+img + p { 
+    balckground: blue;
+}
+
+Para selecionar todos os parágrafos localizados depois de uma imagem usamos o seletor ~
+img ~ p {
+    background: yellow
+} 
+
+Se quisermos mudar todos os parágrafos que não compõe a id="missao"
+.principal p:not(#missao) {
+    background: orange;
+}
+ */
+
+
+ @media screen and (max-width: 480px) {
+    .principal, .mapaConteudo, .conteudoBeneficios, .video, .caixa {
+        width: auto;
+    }
+
+    .conteudoBeneficios {
+        padding: 0 5px;
+    }
+    .listaBeneficios {
+        width: 100%;
+
+    }
+    .imagemBeneficio {
+        width: 100%;
+    }
+    nav {
+        position: static;
+        margin: 0 auto;
+
+    }
+
+    
+    .tituloPrincipal {
+        font-size: 1.5em;
+    }
+        
+    }
+    header > div > h1 {
+        text-align: center;
+    }
+    
+    nav a{
+        font-size: 21px;
+        
+    }   
+}
+ 
+ 
+
+
+

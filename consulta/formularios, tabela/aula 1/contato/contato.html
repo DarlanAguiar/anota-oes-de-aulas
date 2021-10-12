@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="../favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="reset.css">
+    <link rel="stylesheet" href="contato.css">
+    <title>Contatos</title>
+</head>
+<body>
+    <header>
+        <div class="caixa">
+            <h1><img src="logo.png" alt="logo barba"></h1>
+            
+            <nav>
+                <ul>
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../produtos/produtos.html">Produtos</a></li>
+                    <li><a href="#">Contatos</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <form>
+    <!-- label- texto que fica em cima do input. FOR-liga o texo ao campo input. -->
+            <label for="nomesobrenome">Nome e sobrenome: </label>
+            <input type="text" id="nomesobrenome" class="input-padrao" required>
+    <!-- input- cria o campo digitável. ID- ligação com LABEL. REQUIRED- torna obrigatóro o preenchimento.  -->
+
+    <!-- Type="email" dexa o campo digitável esperando @dominio. -->
+            <label for="email">Email:</label>
+            <input type="email" id="email" class="input-padrao" required placeholder="seuemail@dominio.com">
+    <!-- placeholder="exemplo que aperece no campo de digitação." -->
+
+    <!-- type="tel" - deixa o campo digitável esperando apenas numeros. -->
+            <label for="telefone">Telefone:</label>
+            <input type="tel" id="telefone" class="input-padrao" required placeholder="(xx) 99999-9999">
+
+    <!-- textarea-reserva um campo maior que imput. COLS="50"- 50 colunas ROWS="10" 10 linhas -->   
+            <label for="mensagen">Mensagem:</label>
+            <textarea name="" id="mensagen" cols="50" rows="10" class="input-padrao" required></textarea>
+
+    <!-- fieldset-teg mais semântica para formulários. LEGEND- É o paragrafo do fieldset. -->
+            <fieldset>
+                <legend>Como prefere nosso contato?</legend>
+                
+    <!-- input type="radio" - cria um botão clicável, ID e FOR iguais ligam os 2. -->            
+                <label for="radio-email"><input type="radio" name="contato" value="email" id="radio-email" checked>Email</label>
+    <!-- quando clicado retorna para o dono do site NAME="contato" VALUE="email" -->
+    <!-- Checked - deixa 1 campo já marcado.  -->
+                
+                <label for="radio-telefone"><input type="radio" name="contato" value="telefone" id="radio-telefone">Telefone</label>
+                
+
+                <label for="radio-whatsapp"><input type="radio" name="contato" value="whatsapp" id="radio-whatsapp">WhatsApp</label>
+                
+            </fieldset>
+
+            
+                <fieldset>
+                    <legend>Qual horario prefere ser atendido?</legend>
+    <!-- select- tag para abrir um seletor de opções no navegador -->
+    <!-- option - tag para as opções do select. -->                
+                    <select name="horario da reserva" id="">
+                        <option value="nao selecionou">Selecione</option>
+                        <option value="manha">Manhã</option>
+                        <option value="Tarde">Tarde</option>
+                        <option value="Noite">Noite</option>
+                    </select>
+                </fieldset>
+            
+    <!-- INPUT= type"checkbox" - cria um botão clicável. A LABEL dá o texto do botão.  -->
+    <!-- checked deixa o botão selecionado -->
+            <label for="chek" class="checkbox"><input type="checkbox" id="chek" checked>Gostaria de receber nossas novidades pelo e-mail</label>
+
+    <!-- input type="sumit"- cria o botão enviar. VALUE- designa o texto do botão. -->
+            <input type="submit" value="Enviar formulário" class="enviar">
+
+
+        </form>
+        
+        <table>
+            <thead><!-- cabecalho -->
+                <tr> <!-- linha1 -->
+                    <th>Dia</th><!-- coluna 1 -->
+                    <th>Horário</th><!-- ciluna 2 -->
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr><!-- linha 2  -->
+                    <td>Segunda</td><!-- coluna 1 -->
+                    <td>08h ~ 20h</td><!-- coluna 2 -->
+                </tr>
+                <tr><!-- linha 3 -->
+                    <td>Quarta</td> <!-- coluna1 -->
+                    <td>08h ~ 20h</td><!-- coluna2 -->
+                </tr>
+                <tr><!-- Alinha 3 -->
+                    <td>Sexta</td>
+                    <td>08h ~ 20h</td>
+                </tr>
+
+            </tbody>
+
+        </table>
+
+
+    </main>
+
+    <footer>
+        <img src="logo-branco.png" alt="logo brando">
+        <p class="direitos">&copy; Copyright Dr. Gelo Software-2021</p>
+    </footer>
+</body>
+</html>
