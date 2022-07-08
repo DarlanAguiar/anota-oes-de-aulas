@@ -1,0 +1,194 @@
+CREATE DATABASE alura;
+
+DROP TABLE aluno;
+CREATE TABLE aluno (
+    id SERIAL PRIMARY KEY,
+	primeiro_nome VARCHAR(255) NOT NULL,
+	ultimo_nome VARCHAR(255) NOT NULL,
+	data_nascimento DATE NOT NULL
+);
+
+DROP TABLE categoria;
+CREATE TABLE categoria (
+    id SERIAL PRIMARY KEY,
+	nome VARCHAR(255) NOT NULL UNIQUE
+);
+
+DROP TABLE curso;
+CREATE TABLE curso (
+    id SERIAL PRIMARY KEY,
+	nome VARCHAR(255) NOT NULL,
+	categoria_id INTEGER NOT NULL REFERENCES categoria(id)
+);
+
+DROP TABLE aluno_curso;
+CREATE TABLE aluno_curso (
+	aluno_id INTEGER NOT NULL REFERENCES aluno(id),
+	curso_id INTEGER NOT NULL REFERENCES curso(id),
+	PRIMARY KEY (aluno_id, curso_id)
+);
+
+------------------------inserindo valores
+INSERT INTO aluno (primeiro_nome, ultimo_nome,data_nascimento) 
+    VALUES ('Darlan', 'Aguiar', '1987-04-27');
+INSERT INTO aluno (primeiro_nome, ultimo_nome,data_nascimento) 
+    VALUES ('Mayara', 'Garcia', '1990-09-03');
+INSERT INTO aluno (primeiro_nome, ultimo_nome,data_nascimento) 
+    VALUES ('Dari', 'Aguiar', '1987-05-04');
+INSERT INTO aluno (primeiro_nome, ultimo_nome,data_nascimento) 
+    VALUES ('Theo', 'Aguiar', '2019-02-28');
+INSERT INTO aluno (primeiro_nome, ultimo_nome,data_nascimento) 
+    VALUES ('Maria', 'Gomes', '1962-06-06');
+    
+INSERT INTO categoria (nome) VALUES ('FrontEnd');   
+INSERT INTO categoria (nome) VALUES ('BackEnd');   
+INSERT INTO categoria (nome) VALUES ('FullStack');   
+INSERT INTO categoria (nome) VALUES ('Design');   
+ 
+INSERT INTO curso (nome, categoria_id) VALUES ('HTML', 1);
+INSERT INTO curso (nome, categoria_id) VALUES ('CSS', 1);
+INSERT INTO curso (nome, categoria_id) VALUES ('PHP', 2);
+INSERT INTO curso (nome, categoria_id) VALUES ('Node', 2);
+INSERT INTO curso (nome, categoria_id) VALUES ('Photoshop', 4);
+INSERT INTO curso (nome, categoria_id) VALUES ('React', 1);
+INSERT INTO curso (nome, categoria_id) VALUES ('Javascript', 3);
+
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (1, 1);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (1, 2);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (2, 1);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (2, 4);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (3, 3);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (3, 2);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (4, 1);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (4, 3);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (5, 3);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (2, 3);
+------------------------------------------------------------
+
+
+SELECT * FROM aluno;
+SELECT * FROM curso;
+SELECT * FROM categoria;
+SELECT * FROM aluno_curso;
+
+------buscado a quantidade de cursos que cada aluno esta fazendo.
+SELECT aluno.primeiro_nome, 
+       aluno.ultimo_nome, 
+       COUNT(aluno_curso.curso_id) AS QTD_de_curso
+    FROM aluno
+    JOIN aluno_curso on aluno.id = aluno_curso.aluno_id
+    --JOIN curso       on curso.id = aluno_curso.curso_id
+    GROUP BY aluno.primeiro_nome, aluno.ultimo_nome
+    ORDER BY QTD_de_curso desc
+    
+------buscado a quantidade de alunos em cada cursos.
+SELECT curso.nome, 
+       COUNT(aluno_curso.aluno_id) AS QTD_de_alunos
+    FROM curso
+    JOIN aluno_curso on curso.id = aluno_curso.aluno_id
+    --JOIN curso       on curso.id = aluno_curso.curso_id
+    GROUP BY curso.nome
+    ORDER BY QTD_de_alunos desc
+    
+------buscado a quantidade de categoria mais requisitada.
+
+SELECT categoria.nome, 
+       COUNT(curso.categoria_id) AS QTD_de_cat_usadas
+    FROM categoria
+    JOIN curso on curso.categoria_id = categoria.id
+    --JOIN curso       on curso.id = aluno_curso.curso_id
+    GROUP BY 1
+    ORDER BY QTD_de_cat_usadas desc
+    
+SELECT * FROM curso
+    where categoria_id IN (1, 3);
+    
+  
+SELECT curso.nome
+    FROM curso
+    WHERE categoria_id IN (
+        SELECT id FROM categoria
+            where nome LIKE '%a%'
+    )
+--------------busca aninhada
+SELECT nome 
+    FROM (
+        SELECT categoria.nome, 
+           COUNT(curso.categoria_id) AS QTD_de_cat_usadas
+            FROM categoria
+            JOIN curso on curso.categoria_id = categoria.id
+            GROUP BY 1
+            HAVING COUNT(curso.categoria_id) > 1
+    ) AS categoriax
+   WHERE QTD_de_cat_usadas > 1;
+   
+   
+-----------------------------FUNÇÕES
+-----STRING
+SELECT UPPER(primeiro_nome || ' '|| ultimo_nome) 
+    AS NOME_COMPLETO
+    FROM aluno;
+
+SELECT UPPER(CONCAT(primeiro_nome, ' ', ultimo_nome)) 
+    AS NOME_COMPLETO
+    FROM aluno;
+
+
+-----DATAS
+SELECT CONCAT(primeiro_nome, ' ', ultimo_nome) AS NOME_COMPLETO,
+    (NOW()::DATE - data_nascimento) / 365, data_nascimento
+    FROM aluno;
+    
+SELECT CONCAT(primeiro_nome, ' ', ultimo_nome) AS NOME_COMPLETO,
+    EXTRACT(YEAR FROM AGE(data_nascimento)), data_nascimento
+    FROM aluno;
+    
+SELECT CONCAT(primeiro_nome, ' ', ultimo_nome) AS NOME_COMPLETO,
+    DATE_PART('year', AGE(data_nascimento)), data_nascimento
+    FROM aluno;
+    
+--------------------NUMEROS
+SELECT factorial(5);  -- 120 
+SELECT abs(-12);      -- 12 absoluto
+SELECT @ -12;         -- 12 absoluto
+
+SELECT NOW(); --2022-06-29 10:55:12.403795-04
+SELECT NOW()::DATE; --2022-06-29
+SELECT to_char(NOW(), 'DDD'); -- dia do ano
+SELECT to_char(NOW(), 'DD/MM/YYYY'); -- 29/06/2022
+SELECT to_char(NOW(), 'day/MM/YYYY'); -- wednesday/06/2022
+SELECT to_date('05 Dec 2000', 'DD Mon YYYY') --2000-12-05
+SELECT to_char(125.8::real, '999D9') -- 125,8
+SELECT to_char(interval '15h 2m 12s', 'HH12:MI:SS') -- 03:02:12
+
+-----------------------VIEW
+
+SELECT nome 
+    FROM (
+        SELECT categoria.nome, 
+           COUNT(curso.categoria_id) AS QTD_de_cat_usadas
+            FROM categoria
+            JOIN curso on curso.categoria_id = categoria.id
+            GROUP BY 1
+            HAVING COUNT(curso.categoria_id) > 1
+    ) AS categoriax
+   WHERE QTD_de_cat_usadas > 1;
+   
+CREATE VIEW vw_cursos_por_Categoria AS SELECT categoria.nome, 
+       COUNT(curso.categoria_id) AS QTD_de_cat_usadas
+       FROM categoria
+   JOIN curso on curso.categoria_id = categoria.id
+   GROUP BY 1
+   HAVING COUNT(curso.categoria_id) > 1;
+
+SELECT * FROM vw_cursos_por_Categoria;
+
+CREATE VIEW vw_cursos_fronend AS
+    SELECT nome
+        FROM curso
+        WHERE categoria_id IN (
+        SELECT id FROM categoria
+            WHERE nome = 'FrontEnd'
+        );
+        
+SELECT * FROM vw_cursos_fronend;

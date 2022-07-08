@@ -1,0 +1,35 @@
+DROP TABLE posts
+
+CREATE TABLE posts (
+    id SERIAL PRIMARY KEY,
+    date VARCHAR(15),
+    edit_date VARCHAR(255),
+    message VARCHAR(255),
+    title VARCHAR(255),
+    trash BOOLEAN,
+    share VARCHAR(50),
+    db_name VARCHAR(50),
+    check_list TEXT
+)
+
+SELECT * FROM posts;
+DELETE FROM posts;
+
+INSERT INTO posts (date, trash, share, db_name, edit_date, message, title, check_list)
+	VALUES('01-06-2022', false, NULL, 'darlanaguiar@hotmail.com', 'Editado 22/06/2022', 'mensagem 1',
+		    'Titulo 1', '[{"check":false,"text":"teste 1"},{"check":true,"text":"mais um teste 1"}]');
+			
+			
+INSERT INTO posts (date, trash, share, db_name, edit_date, message, title, check_list)
+	VALUES('02-06-2022', false, NULL, 'darlanaguiar@hotmail.com', 'Editado 22/06/2022', 'mensagem 2',
+		    'Titulo 2', '[{"check":false,"text":"teste 2"},{"check":true,"text":"mais um teste 2"}]');
+			
+			
+INSERT INTO posts (date, trash, share, db_name, edit_date, message, title, check_list)
+	VALUES('03-06-2022', false, NULL, 'darlanaguiar@hotmail.com', 'Editado 22/06/2022', 'mensagem 3',
+		    'Titulo 3', '[{"check":false,"text":"teste 3"},{"check":true,"text":"mais um teste 3"}]');
+			
+						
+INSERT INTO posts (date, trash, share, db_name, edit_date, message, title, check_list)
+	VALUES('04-06-2022', false, NULL, 'darlanaguiar@hotmail.com', 'Editado 22/06/2022', 'mensagem 4',
+		    'Titulo 3', '[{"check":false,"text":"teste 4"},{"check":true,"text":"mais um teste 4"}]');
