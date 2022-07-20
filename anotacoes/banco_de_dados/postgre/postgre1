@@ -1,0 +1,364 @@
+serial
+integer
+real
+numeric
+
+varchar
+char
+boolean
+
+date
+time
+timestamp
+
+CREATE TABLE aluno(
+    id SERIAL,
+    nome VARCHAR(255),
+    cpf CHAR(11),
+    observação TEXT,
+    idade INTEGER,
+    dinheiro numeric(10,2),
+    altura real,
+    ativo BOOLEAN,
+    data_nascimento DATE,
+    hora_aula TIME,
+    matriculado_em TIMESTAMP
+);
+
+SELECT * FROM aluno;
+
+INSERT INTO aluno (
+    nome, 
+    cpf, 
+    observação, 
+    idade, 
+    dinheiro, 
+    altura, 
+    ativo, 
+    data_nascimento, 
+    hora_aula, 
+    matriculado_em
+) 
+VALUES ('Darlan4', 
+        '01270409190', 
+        'texto livre', 
+        34, 
+        100.50, 
+        1.75, 
+        TRUE, 
+        '1987-04-27',
+        '17:30:00',
+        '2022-06-24 14:30:12'
+)
+
+SELECT * FROM aluno
+    WHERE id = 1;
+    
+UPDATE aluno
+    SET nome = 'darlan3', 
+    cpf = '11270409191', 
+    observação = 'Mudança no texto', 
+    idade = 35, 
+    dinheiro = 99.90, 
+    altura = 1.89, 
+    ativo = FALSE, 
+    data_nascimento = '1987-04-26', 
+    hora_aula =  '17:32:00'
+WHERE nome = 'darlan2';
+
+SELECT * FROM aluno
+WHERE nome = 'darlan2'
+
+DELETE FROM aluno
+WHERE nome = 'darlan2'
+
+SELECT nome, idade
+    FROM aluno
+    
+SELECT nome as "Nome do aluno", 
+    idade as Idade_do_aluno
+FROM aluno
+
+INSERT INTO aluno (nome) VALUES ('mayara');
+INSERT INTO aluno (nome, cpf) VALUES ('izabelle', '01201201290');
+INSERT INTO aluno (nome) VALUES ('maria');
+INSERT INTO aluno (nome) VALUES ('meire');
+INSERT INTO aluno (nome) VALUES ('Dari');
+
+SELECT * FROM aluno
+WHERE nome = 'Darlan4';
+
+SELECT * FROM aluno
+WHERE nome != 'darlan3';
+
+SELECT * FROM aluno
+WHERE nome NOT LIKE '_arlan_';
+
+SELECT * FROM aluno
+WHERE nome LIKE 'm%';
+
+SELECT * FROM aluno
+WHERE nome LIKE '%a';
+
+SELECT * FROM aluno
+WHERE nome LIKE '%ya%';
+
+SELECT * FROM aluno
+WHERE nome LIKE '%m%a';
+
+SELECT * FROM aluno
+WHERE nome LIKE '%m%a';
+
+SELECT * FROM aluno
+WHERE cpf IS NULL;
+
+SELECT * FROM aluno
+WHERE cpf IS NOT NULL;
+
+SELECT * FROM aluno
+WHERE idade = 34;
+
+SELECT * FROM aluno
+WHERE idade != 34;
+
+SELECT * FROM aluno
+WHERE idade >= 34;
+
+SELECT * FROM aluno
+WHERE idade <= 34;
+
+SELECT * FROM aluno
+WHERE idade < 34;
+
+SELECT * FROM aluno
+WHERE idade > 34;
+
+SELECT * FROM aluno
+WHERE idade BETWEEN 34 AND 50;
+
+SELECT * FROM aluno
+where ativo = TRUE
+
+SELECT * FROM aluno
+where ativo != TRUE
+
+SELECT *FROM aluno
+    WHERE nome LIKE 'm%'
+    AND cpf IS NULL
+    AND nome LIKE '%a' ;
+
+SELECT *FROM aluno
+    WHERE nome LIKE 'm%'
+    OR cpf IS NULL
+    OR nome LIKE '%a' ;
+
+DROP TABLE curso
+
+CREATE TABLE curso (
+    id INTEGER NOT NULL UNIQUE,
+    nome VARCHAR(255) NOT NULL
+);
+
+DROP TABLE aluno;
+DROP TABLE aluno_curso;
+
+CREATE TABLE curso (
+    id INTEGER PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL
+);
+
+INSERT INTO curso (id, nome) VALUES (1, 'JavaScript');
+INSERT INTO curso (id, nome) VALUES (2, 'PHP');
+INSERT INTO curso (id, nome) VALUES (3, 'Python');
+INSERT INTO curso (id, nome) VALUES (4, 'CSS');
+
+CREATE TABLE aluno (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL
+);
+INSERT INTO aluno (nome) VALUES ('Diogo')
+INSERT INTO aluno (nome) VALUES ('Vinicius')
+INSERT INTO aluno (nome) VALUES ('Nico')
+INSERT INTO aluno (nome) VALUES ('João')
+
+
+CREATE TABLE aluno_curso (
+    aluno_id INTEGER,
+    curso_id INTEGER,
+    PRIMARY KEY (aluno_id, curso_id),
+    
+    FOREIGN KEY (aluno_id)
+    REFERENCES aluno (id),
+    
+    FOREIGN KEY (curso_id)
+    REFERENCES curso (id)
+);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (1,1)
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (2,1)
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (2,2)
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (1,3)
+
+SELECT * FROM curso;
+SELECT * FROM aluno;
+SELECT * FROM aluno_curso;
+
+SELECT * FROM aluno_curso
+ JOIN aluno       ON aluno.id = aluno_curso.aluno_id
+ JOIN curso       ON curso.id = aluno_curso.curso_id 
+ 
+SELECT aluno.nome as Nome_do_aluno,
+       curso.nome as "Nome do curso"
+       FROM aluno_curso
+ JOIN aluno  ON aluno.id = aluno_curso.aluno_id
+ JOIN curso  ON curso.id = aluno_curso.curso_id 
+ 
+SELECT aluno.nome as Nome_do_aluno,
+       curso.nome as "Nome do curso"
+       FROM aluno
+  LEFT JOIN aluno_curso  ON aluno.id = aluno_curso.aluno_id
+  LEFT JOIN curso  ON curso.id = aluno_curso.curso_id 
+  
+SELECT aluno.nome as Nome_do_aluno,
+       curso.nome as "Nome do curso"
+       FROM aluno
+  RIGHT JOIN aluno_curso  ON aluno.id = aluno_curso.aluno_id
+  RIGHT JOIN curso  ON curso.id = aluno_curso.curso_id 
+  
+SELECT aluno.nome as Nome_do_aluno,
+       curso.nome as "Nome do curso"
+       FROM aluno
+  FULL JOIN aluno_curso  ON aluno.id = aluno_curso.aluno_id
+  FULL JOIN curso  ON curso.id = aluno_curso.curso_id
+  Order by curso.nome desc;
+  
+  
+SELECT aluno.nome as Nome_do_aluno,
+       curso.nome as "Nome do curso"
+       FROM aluno
+    CROSS JOIN curso;
+   
+DROP TABLE aluno_curso;
+    
+CREATE TABLE aluno_curso (
+    aluno_id INTEGER,
+    curso_id INTEGER,
+    PRIMARY KEY (aluno_id, curso_id),
+    
+    FOREIGN KEY (aluno_id)
+    REFERENCES aluno (id)
+    ON DELETE CASCADE
+    ON UPDATE CASCADE,
+    
+    FOREIGN KEY (curso_id)
+    REFERENCES curso (id)
+    ON DELETE CASCADE
+);
+
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (3,1);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (4,2);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (5,2);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (6,3);
+    
+SELECT * FROM aluno_curso;
+SELECT * FROM aluno;
+
+DELETE FROM aluno
+ WHERE nome = 'Diogo'
+ 
+UPDATE aluno SET nome = 'João Vitor'
+    where nome = 'João';
+    
+UPDATE aluno SET id = 10
+    where id = 1;
+ 
+CREATE TABLE funcionarios (
+    id SERIAL PRIMARY KEY,
+    matricula VARCHAR(10),
+    nome      VARCHAR(255),
+    sobrenome VARCHAR(255)
+);
+
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M001', 'Darlan', 'Aguiar');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M002', 'Darlan', 'Aguiar');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M003', 'Darlan', 'Aguiar');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M004', 'Beatriz', 'Bezerra');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M005', 'Amanda', 'Sampaio');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M006', 'Claudio', 'Girotto');
+INSERT INTO funcionarios (matricula, nome, sobrenome) VALUES ('M007', 'Marcos', 'Sioli');
+
+SELECT * FROM funcionarios
+ ORDER BY nome, matricula;
+ 
+SELECT * FROM funcionarios
+ ORDER BY funcionarios.id
+ LIMIT 5
+ OFFSET 2;
+    
+SELECT COUNT(id),
+    SUM(id),
+    MAX(id),
+    MIN(id),
+    ROUND(AVG(id),1)
+    FROM funcionarios;
+
+SELECT DISTINCT nome, sobrenome
+    FROM funcionarios;
+ 
+SELECT nome, sobrenome, COUNT(nome)
+    FROM funcionarios
+    GROUP BY nome, sobrenome;
+
+SELECT curso.nome,
+ COUNT(aluno.nome) as QTD_cursos
+FROM aluno
+ JOIN aluno_curso on aluno.id = aluno_curso.aluno_id 
+ JOIN curso       on curso.id = aluno_curso.curso_id
+ GROUP BY curso.nome
+ ORDER BY curso.nome;
+ 
+SELECT curso.nome,
+ COUNT(aluno.id) as QTD_cursos
+ FROM curso
+ LEFT JOIN aluno_curso on curso.id = aluno_curso.curso_id 
+ LEFT JOIN aluno       on aluno.id = aluno_curso.aluno_id
+ GROUP BY curso.nome
+ HAVING COUNT(aluno.id) = 0
+ ORDER BY curso.nome;
+ 
+ SELECT nome, COUNT(id)
+    FROM funcionarios
+    GROUP BY nome
+    HAVING COUNT(id) > 1;
+    
+---------------------------------------------------------------------------------------
+
+CREATE DATABASE alura;
+
+CREATE TABLE aluno (
+    id SERIAL PRIMARY KEY,
+	primeiro_nome VARCHAR(255) NOT NULL,
+	ultimo_nome VARCHAR(255) NOT NULL,
+	data_nascimento DATE NOT NULL
+);
+
+CREATE TABLE categoria (
+    id SERIAL PRIMARY KEY,
+	nome VARCHAR(255) NOT NULL UNIQUE
+);
+
+CREATE TABLE curso (
+    id SERIAL PRIMARY KEY,
+	nome VARCHAR(255) NOT NULL,
+	categoria_id INTEGER NOT NULL REFERENCES categoria(id)
+);
+
+CREATE TABLE aluno_curso (
+	aluno_id INTEGER NOT NULL REFERENCES aluno(id),
+	curso_id INTEGER NOT NULL REFERENCES curso(id),
+	PRIMARY KEY (aluno_id, curso_id)
+);
+
+
+
+
+

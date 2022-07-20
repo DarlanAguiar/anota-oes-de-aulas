@@ -1,0 +1,23 @@
+CREATE TABLE teste (
+ nome JSONB
+)
+
+INSERT INTO teste (nome) VALUES ('{"carro": "ferrari"}')
+select * from teste
+WHERE nome->'attributes'->>'carro'='ferrari2';
+
+select * from teste
+WHERE nome->'attributes'->>'carro'='ferrari3';
+
+select *, nome->'carro' as carro from teste;
+
+select * from teste
+ WHERE nome->'carro' = '"ferrari"';
+
+
+
+INSERT INTO teste (nome) VALUES ('{"carro": "ferrari3"}'::JSONB)
+
+SELECT *
+FROM shirts
+WHERE details->'attributes'->>'color' = 'neon yellow'

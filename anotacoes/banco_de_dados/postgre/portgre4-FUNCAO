@@ -1,0 +1,503 @@
+------------------CRIANDO UMA FUNCÃO
+CREATE FUNCTION primeira_funcao() RETURNS INTEGER AS '
+    SELECT (5-3)*2
+' LANGUAGE SQL;
+
+SELECT primeira_funcao() AS numero;
+
+-----------------FUNÇÃO QUE RETORNA A SOMA DE 2 NUMEROS
+DROP FUNCTION soma_dois_numeros;
+
+CREATE FUNCTION soma_dois_numeros(numero_1 INTEGER, numero_2 INTEGER) RETURNS INTEGER AS '
+    SELECT numero_1 + numero_2;
+' LANGUAGE SQL;
+
+SELECT soma_dois_numeros(3, 17);
+
+CREATE FUNCTION soma_dois_numeros(INTEGER, INTEGER) RETURNS INTEGER AS '
+    SELECT $1 + $2;
+' LANGUAGE SQL;
+
+SELECT soma_dois_numeros(3, 17);
+
+-----------------FUNÇÃO QUE ADICIONA UM ITEM NA TABELA
+CREATE TABLE t_nome (nome VARCHAR(255) NOT NULL)
+
+CREATE FUNCTION retorna(nome_f VARCHAR) RETURNS VARCHAR AS $$
+    
+    INSERT INTO t_nome (nome) VALUES (retorna.nome_f);
+    
+    SELECT t_nome.nome FROM t_nome; -- sempre retornará o primeiro item da tabela
+$$ LANGUAGE SQL;
+
+SELECT retorna('Pedro');
+
+SELECT * FROM t_nome;
+
+------------FUNCÃO QUE NÃO RETORNA NADA
+
+CREATE OR REPLACE FUNCTION retorna2(nome_f VARCHAR) RETURNS void AS $$
+    
+    INSERT INTO t_nome (nome) VALUES (retorna2.nome_f);
+    
+$$ LANGUAGE SQL;
+
+SELECT retorna2('Pedro');
+
+
+-------PARÂMETROS COMPOSTOS
+DROP TABLE intrutor;
+
+CREATE TABLE instrutor (
+    id SERIAL PRiMARY KEY,
+    nome VARCHAR(255),
+    salario DECIMAL(10, 2)
+);
+
+INSERT INTO instrutor (nome, salario) VALUES ('Darlan', 100);
+INSERT INTO instrutor (nome, salario) VALUES ('Darlan2', 102);
+SELECT * FROM instrutor;
+
+CREATE FUNCTION dobro_do_salario(instrutor VARCHAR) RETURNS DECIMAL AS $$
+    SELECT salario * 2 FROM instrutor
+    WHERE nome = dobro_do_Salario.instrutor;
+$$ LANGUAGE SQL;
+
+SELECT dobro_do_salario('Darlan');
+-------------------------------------------------
+DROP FUNCTION dobro_do_salario2;
+CREATE FUNCTION dobro_do_salario2(professor instrutor) RETURNS DECIMAL AS $$
+    SELECT professor.salario * 2;
+$$ LANGUAGE SQL;
+
+SELECT nome, dobro_do_salario2(instrutor.*) FROM instrutor;
+
+--------------------RETORNO COMPOSTO
+
+CREATE OR REPLACE FUNCTION instrutor_falso() RETURNS instrutor AS $$ 
+    SELECT 22, 'Nome Falso', 102
+$$ LANGUAGE SQL;
+ 
+SELECT * FROM instrutor_falso();
+
+-----------retorno de conjuntos
+
+INSERT INTO instrutor (nome, salario) VALUES ('Darlan', 100);
+INSERT INTO instrutor (nome, salario) VALUES ('Mayara', 200);
+INSERT INTO instrutor (nome, salario) VALUES ('Theo', 300);
+INSERT INTO instrutor (nome, salario) VALUES ('Maria', 400);
+INSERT INTO instrutor (nome, salario) VALUES ('Dari', 500);
+
+CREATE FUNCTION instrutores_bem_pagos (valor_salario DECIMAL) RETURNS SETOF instrutor AS $$ 
+    SELECT * FROM instrutor WHERE salario >= valor_salario;
+$$ LANGUAGE SQL;
+
+SELECT * FROM instrutores_bem_pagos(300);
+
+--------------Parametro de saida;
+
+CREATE FUNCTION somaEmultiplica (val1 INTEGER, val2 INTEGER, OUT INTEGER, OUT INTEGER) AS $$
+    SELECT val1 + val2 AS SOMA, val1 * val2 AS MULTI
+$$ LANGUAGE SQL;
+
+SELECT * FROM somaEmultiplica(3,3);
+
+CREATE TYPE soma_e_Produto AS (soma INTEGER, multiplicacao INTEGER);
+
+CREATE FUNCTION somaEmultiplica2 (val1 INTEGER, val2 INTEGER) RETURNS soma_e_produto AS $$
+    SELECT val1 + val2 AS SOMA, val1 * val2 AS MULTI
+$$ LANGUAGE SQL;
+
+SELECt * FROM somaEmultiplica2(3,3);
+
+----------PLpgSQL-----------------------------------------------------------------------
+
+CREATE OR REPLACE FUNCTION primeira_pl() RETURNS INTEGER AS $$
+    DECLARE 
+        primeira_variavel INTEGER DEFAULT 3;
+    BEGIN
+     primeira_variavel :=  primeira_variavel * 2;
+        RETURN primeira_variavel;
+    END
+$$ LANGUAGE plpgsql;
+
+SELECT primeira_pl();
+
+CREATE OR REPLACE FUNCTION primeira_pl() RETURNS INTEGER AS $$
+    DECLARE 
+        primeira_variavel INTEGER DEFAULT 3;
+    BEGIN
+     primeira_variavel :=  primeira_variavel * 2;
+        DECLARE 
+            primeira_variavel INTEGER DEFAULT 1;
+        BEGIN
+            primeira_variavel :=  primeira_variavel * 4;
+        END;
+     
+        RETURN primeira_variavel;
+    END
+$$ LANGUAGE plpgsql;
+
+SELECT primeira_pl();
+
+------------FUNCÃO QUE NÃO RETORNA NADA com PL
+
+CREATE OR REPLACE FUNCTION retorna2(nome_f VARCHAR) RETURNS void AS $$
+    BEGIN               -- śo indicar o inicio BEGIN e o fim END
+        INSERT INTO t_nome (nome) VALUES (retorna2.nome_f);
+    end
+$$ LANGUAGE plpgsql;
+
+SELECT retorna2('Pedro4');
+
+SELECT * FROM t_nome;
+
+--------------------RETORNO COMPOSTO com PL
+
+CREATE OR REPLACE FUNCTION instrutor_falso() RETURNS instrutor AS $$ 
+    BEGIN
+        RETURN ROW (22, 'Nome Falso', 103)::instrutor;  --retornando a linha inteira
+    END;
+$$ LANGUAGE plpgsql;
+ 
+SELECT * FROM instrutor_falso();
+
+-----------------Retorno de uma variável
+CREATE OR REPLACE FUNCTION instrutor_falso() RETURNS instrutor AS $$ 
+    DECLARE
+        variavel instrutor;  --declarando a variavel com type instrutor
+    BEGIN
+        SELECT 22, 'Nome Falso', 1013 INTO variavel; --passando o retorno do delect para variável
+        RETURN variavel;           --retornando a variável
+    END;
+$$ LANGUAGE plpgsql;
+ 
+SELECT * FROM instrutor_falso();
+
+-----------retorno de conjuntos em PL
+
+INSERT INTO instrutor (nome, salario) VALUES ('Darlan', 100);
+INSERT INTO instrutor (nome, salario) VALUES ('Mayara', 200);
+INSERT INTO instrutor (nome, salario) VALUES ('Theo', 300);
+INSERT INTO instrutor (nome, salario) VALUES ('Maria', 400);
+INSERT INTO instrutor (nome, salario) VALUES ('Dari', 500);
+
+CREATE OR REPLACE FUNCTION instrutores_bem_pagos (valor_salario DECIMAL) RETURNS SETOF instrutor AS $$
+
+    BEGIN
+        RETURN QUERY SELECT * FROM instrutor WHERE salario >= valor_salario; -- basta adicionar RETURN QUERY
+    END
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM instrutores_bem_pagos(300);
+
+-----------
+
+CREATE TYPE nome_e_salario AS (nome VARCHAR, salario DECIMAL);
+
+DROP FUNCTION instrutores_bem_pagos;
+CREATE OR REPLACE FUNCTION instrutores_bem_pagos (valor_salario DECIMAL) RETURNS SETOF nome_e_salario AS $$
+    BEGIN
+        RETURN QUERY SELECT nome, salario FROM instrutor WHERE salario >= valor_salario; -- basta adicionar RETURN QUERY
+    END
+$$ LANGUAGE plpgsql;
+
+SELECT * FROM instrutores_bem_pagos(300);
+
+--------------------------------IF ELSEIF ELSE 
+CREATE OR REPLACE FUNCTION salario_ok(professor instrutor) RETURNS VARCHAR AS $$
+    BEGIN
+       --Se o salario do intruto r for maior que 200 retornar salario ok, senão, salario baixo.
+        IF professor.salario > 300 THEN
+            RETURN 'Salario OK';
+        ELSEIF professor.salario = 300 THEN
+            RETURN 'Salario perfeito';
+        ELSE
+            RETURN 'Salario Baixo';
+        END IF;
+    END;
+$$ LANGUAGE plpgsql;
+
+SELECT nome, salario, salario_ok(instrutor.*) from instrutor;
+
+-----------------CASE
+CREATE OR REPLACE FUNCTION salario_ok(professor instrutor) RETURNS VARCHAR AS $$
+    BEGIN
+        CASE 
+            WHEN professor.salario <= 100 THEN
+                RETURN 'Salário muito Baixo';
+            WHEN professor.salario <= 200 THEN
+                RETURN 'Salario Baixo';
+            WHEN professor.salario <= 300 THEN
+                RETURN 'Salario OK';
+            ELSE
+                RETURN 'Salário Alto';
+         END CASE;
+    END;
+$$ LANGUAGE plpgsql;
+
+SELECT nome, salario, salario_ok(instrutor.*) from instrutor;
+
+
+CREATE OR REPLACE FUNCTION salario_ok(professor instrutor) RETURNS VARCHAR AS $$
+    BEGIN
+        CASE professor.salario
+            WHEN 100 THEN
+                RETURN 'Salário muito Baixo';
+            WHEN 102 THEN
+                RETURN 'Salario Baixo';
+            WHEN 200 THEN
+                RETURN 'Salario Baixo';
+            WHEN 300 THEN
+                RETURN 'Salario OK';
+            ELSE
+                RETURN 'Salário Alto';
+         END CASE;
+    END;
+$$ LANGUAGE plpgsql;
+
+SELECT nome, salario, salario_ok(instrutor.*) from instrutor;
+
+------------------ SEM ESTRUTURA DE REPETIÇÃO:
+CREATE OR REPLACE FUNCTION devolve_tabuada(num INTEGER) RETURNS SETOF VARCHAR AS $$
+    DECLARE
+    BEGIN
+    -- devolvendo só o valor da tabuada.
+    -- RETURN NEXT é parecido com o RETURN QUERY, ele junta os RETURN e retorna todos de uma só vez.
+        RETURN NEXT num * 1;
+        RETURN NEXT num * 2;
+        RETURN NEXT num * 3;
+        RETURN NEXT num * 4;
+        RETURN NEXT num * 5;
+        RETURN NEXT num * 6;
+        RETURN NEXT num * 7;
+        RETURN NEXT num * 8;
+        RETURN NEXT num * 9;
+        RETURN NEXT num * 10;
+    
+    END;
+$$ LANGUAGE plpgsql;
+
+SELECT devolve_tabuada(2);
+
+------------------ESTRUTURA DE REPETIÇÃO LOOP:
+
+CREATE OR REPLACE FUNCTION devolve_tabuada(num INTEGER) RETURNS SETOF VARCHAR AS $$
+    DECLARE
+        -- multiplicador que começa com 1;
+        multiplicador INTEGER DEFAULT 1;
+        
+    BEGIN
+    -- multiplicador deve ir até o 10.
+    -- conta num * multiplicador.
+    -- acréscimo do multiplicador [multiplicador := multiplicador + 1].
+        LOOP 
+            RETURN NEXT num || ' X ' || multiplicador || ' = ' || num * multiplicador;    --retorno
+            
+            multiplicador := multiplicador + 1; --acréscimo
+            
+            EXIT WHEN multiplicador = 11; --condição de saida
+        END LOOP;
+    
+    END;
+$$ LANGUAGE plpgsql;
+
+SELECT devolve_tabuada(2);
+
+------------------ESTRUTURA DE REPETIÇÃO WHILE LOOP:
+CREATE OR REPLACE FUNCTION devolve_tabuada(num INTEGER) RETURNS SETOF VARCHAR AS $$
+    DECLARE 
+        multiplicador INTEGER DEFAULT 1;
+    
+    BEGIN
+        WHILE multiplicador < 11 LOOP --condição de saida
+    
+            RETURN NEXT CONCAT(num, ' X ', multiplicador, ' = ', num * multiplicador); 
+            multiplicador := multiplicador + 1; --acréscimo
+        END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+
+SELECT devolve_tabuada(5);
+
+-----------------ESTRUTURA DE REPETIÇÃO FOR
+                                                    -- SETOF - varias linhas serão retornadas
+CREATE OR REPLACE FUNCTION devolve_tabuada( num INTEGER) RETURNS SETOF VARCHAR AS $$
+    DECLARE
+    inicio INTEGER DEFAULT 1;
+    fim INTEGER DEFAULT 10;   -- variáveis
+    BEGIN
+        FOR multiplicador IN inicio..fim LOOP  -- o operador .. indica de 1 até o 10.
+            RETURN NEXT num || ' X ' || multiplicador || ' = ' || num * multiplicador; 
+            --RETURN NEXT CONCAT(num, ' X ', multiplicador, ' = ', num * multiplicador); 
+        END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+SELECT devolve_tabuada(3);
+                                                                                  -- SETOF - varias linhas serão retornadas
+CREATE OR REPLACE FUNCTION condicao_salarial(OUT nome VARCHAR, OUT status_salario VARCHAR) RETURNS SETOF record AS $$
+    DECLARE                                                               -- RECORD significa retorno de qualquer tipo
+        instrutor_variavel instrutor; -- criando a variável instrutor_variavel e o seu tipo:
+    BEGIN
+        FOR instrutor_variavel IN SELECT * FROM instrutor WHERE salario > 200 LOOP --a condição de parada será quando passar
+            nome := instrutor_variavel.nome;                                       --  por todas as linhas da query.
+            status_salario := salario_ok(instrutor_variavel); --chamando uma outra função e passando para esta função   
+            RETURN NEXT;                                      -- uma linha inteira da tabela intrutor.
+        END LOOP;
+    END;
+$$ LANGUAGE plpgsql;
+
+SELECT nome, status_salario FROM condicao_salarial();
+----------------------------------------------------------------------
+
+--------- MÃO NA MASSA FUNÇES--------------------------
+
+-- DROP TABLE aluno;
+CREATE TABLE aluno (
+    id SERIAL PRIMARY KEY,
+	primeiro_nome VARCHAR(255) NOT NULL,
+	ultimo_nome VARCHAR(255) NOT NULL,
+	data_nascimento DATE NOT NULL
+);
+
+-- DROP TABLE categoria;
+CREATE TABLE categoria (
+    id SERIAL PRIMARY KEY,
+	nome VARCHAR(255) NOT NULL UNIQUE
+);
+
+-- DROP TABLE curso;
+CREATE TABLE curso (
+    id SERIAL PRIMARY KEY,
+	nome VARCHAR(255) NOT NULL,
+	categoria_id INTEGER NOT NULL REFERENCES categoria(id)
+);
+
+-- DROP TABLE aluno_curso;
+CREATE TABLE aluno_curso (
+	aluno_id INTEGER NOT NULL REFERENCES aluno(id),
+	curso_id INTEGER NOT NULL REFERENCES curso(id),
+	PRIMARY KEY (aluno_id, curso_id)
+);
+
+------------------------inserindo valores
+INSERT INTO aluno (primeiro_nome, ultimo_nome,data_nascimento) 
+    VALUES ('Darlan', 'Aguiar', '1987-04-27');
+INSERT INTO aluno (primeiro_nome, ultimo_nome,data_nascimento) 
+    VALUES ('Mayara', 'Garcia', '1990-09-03');
+INSERT INTO aluno (primeiro_nome, ultimo_nome,data_nascimento) 
+    VALUES ('Dari', 'Aguiar', '1987-05-04');
+INSERT INTO aluno (primeiro_nome, ultimo_nome,data_nascimento) 
+    VALUES ('Theo', 'Aguiar', '2019-02-28');
+INSERT INTO aluno (primeiro_nome, ultimo_nome,data_nascimento) 
+    VALUES ('Maria', 'Gomes', '1962-06-06');
+    
+INSERT INTO categoria (nome) VALUES ('FrontEnd');   
+INSERT INTO categoria (nome) VALUES ('BackEnd');   
+INSERT INTO categoria (nome) VALUES ('FullStack');   
+INSERT INTO categoria (nome) VALUES ('Design');   
+ 
+INSERT INTO curso (nome, categoria_id) VALUES ('HTML', 1);
+INSERT INTO curso (nome, categoria_id) VALUES ('CSS', 1);
+INSERT INTO curso (nome, categoria_id) VALUES ('PHP', 2);
+INSERT INTO curso (nome, categoria_id) VALUES ('Node', 2);
+INSERT INTO curso (nome, categoria_id) VALUES ('Photoshop', 4);
+INSERT INTO curso (nome, categoria_id) VALUES ('React', 1);
+INSERT INTO curso (nome, categoria_id) VALUES ('Javascript', 3);
+
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (1, 1);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (1, 2);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (2, 1);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (2, 4);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (3, 3);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (3, 2);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (4, 1);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (4, 3);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (5, 3);
+INSERT INTO aluno_curso (aluno_id, curso_id) VALUES (2, 3);
+------------------------------------------------------------
+
+
+SELECT * FROM aluno;
+SELECT * FROM curso;
+SELECT * FROM categoria;
+SELECT * FROM aluno_curso;
+
+-- Criando uma função que insira um cursos em um adeterminada categoria, só que passaremos para a função o nome do curso e não o ID
+-- se uma categoria com este nome já existir utilizaromos este ide para a inserção,  
+-- caso não exista uma cagoria com o nome então criaremos primeiro a categoria e depois o curso.
+
+CREATE OR REPLACE FUNCTION cria_curso(nome_curso VARCHAR, nome_categoria VARCHAR) RETURNS void AS $$
+    DECLARE
+        id_categoria INTEGER;
+    BEGIN        -- INTO add o id na variavel id_categoria.
+        SELECT id INTO id_categoria FROM categoria WHERE nome = nome_categoria;
+        IF NOT FOUND THEN --FOUND - Uma variável que informa se houve algum resultado produzido pela última query executada. 
+                          -- IF NOT FOUND THEN(se nada encontrou nada , então)
+            INSERT INTO categoria (nome) VALUES (nome_categoria) RETURNING id INTO id_categoria; --RETURNING-após inserir a categoria ele retorna o id desta categoria.
+        END IF;
+        INSERT INTO curso (nome, categoria_id) VALUES (nome_curso, id_categoria);
+    END;
+$$ LANGUAGE plpgsql;
+
+SELECT cria_curso('PHP', 'Programação');
+SELECT cria_curso('Java', 'Programação');
+
+-- criar uma função para inserir instrutores com os seus salários.
+-- se o salário inserido é maior do que a mádia, exibir e salvar uma mensagem informando que é maior que a média.
+-- salvar também uma outra mensagem informando que Fulando recebe X% a mais que ciclano.
+DROP
+CREATE TABLE instrutor (
+    id SERIAL PRiMARY KEY,
+    nome VARCHAR(255),
+    salario DECIMAL(10,2)  --da digitos e 2 casas após a vírgula;
+);
+
+CREATE TABLE mensagem_instrutores (
+    id SERIAL PRIMARY KEY,
+    informacao VARCHAR(255),
+    momento_criacao TIMESTAMP DEFAULT CURRENT_TIMESTAMP --caso eu não passe o valor o valor padrão é o momento atual;   
+);
+
+CREATE OR REPLACE FUNCTION cria_instrutor(nome_instrutor VARCHAR, salario_instrutor DECIMAL) RETURNS void AS $$
+    DECLARE
+        id_instrutor_inserido INTEGER;
+        media_salarial DECIMAL;
+        instrutores_recebem_menos INTEGER DEFAULT 0;
+        total_instrutores INTEGER DEFAULT 0;
+        salario DECIMAL;
+        percentual DECIMAL(5,2);
+    BEGIN
+        SELECT AVG(instrutor.salario) from instrutor INTO media_salarial; -- buscando a media salarial - AVG - retorna uma média.
+    
+        INSERT INTO instrutor (nome, salario) VALUES (nome_instrutor, salario_instrutor) RETURNING id INTO id_instrutor_inserido; 
+       
+        IF salario_instrutor > media_salarial THEN
+            INSERT INTO mensagem_instrutores (informacao) VALUES (nome_instrutor || ' recebe acima da média');
+        END IF;
+        
+        FOR salario IN SELECT instrutor.salario FROM instrutor WHERE id != id_instrutor_inserido LOOP
+            total_instrutores := total_instrutores +1;
+            
+            IF salario_instrutor > salario THEN -- se o salario do intrutor for maior que o salario que estou percorrendo agora.
+                instrutores_recebem_menos := instrutores_recebem_menos +1;
+            END IF;
+        END LOOP;
+        
+        percentual := (instrutores_recebem_menos::DECIMAL / total_instrutores::DECIMAL) *100; --o decimal é pq o postgres vai tentar ajudar pois 3/10=0.3 
+                                                                                             -- sem o decimal o postgres arredondaria para 0 e 0 * 100 = 0
+        INSERT INTO mensagem_instrutores (informacao) VALUES (nome_instrutor || ' recebe mais do que ' || percentual || '% da grade de intrutores'); 
+    END;
+$$ LANGUAGE plpgsql;
+
+SELECT cria_instrutor('nina2', 600);
+SELECT cria_instrutor('nina2', 601);
+SELECT cria_instrutor('Maria', 99);
+SELECT cria_instrutor('Maria2', 100);
+
+SELECT * FROM instrutor;
+SELECT * FROM mensagem_instrutores;
+SELECT * FROM instrutor;
+

@@ -1,0 +1,78 @@
+select * from teste;
+
+DROP TABLE instrutor;
+CREATE TABLE instrutor (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    salario DECIMAL(10, 2)
+);
+
+SELECT COUNT(*) FROM instrutor;
+SELECT * FROM instrutor;
+DELETE FROM instrutor;
+
+DO $$
+    DECLARE
+    BEGIN
+        FOR i IN 1..100 LOOP
+            INSERT INTO instrutor (nome, salario) VALUES ('Instrutor(a) ' || i, random() * 1000 + 1);
+        END LOOP;
+    END;
+$$;
+
+UPDATE instrutor SET salario = salario * 2 WHERE id % 2 = 1; -- mundando o salario dos intrtutores co id impar
+
+DELETE FROM instrutor WHERE id % 2 = 0;
+
+VACUUM ANALYSE instrutor; -- OLHA A TABELA E ATUALIZA O PLANEJADOR DE QUERYS
+
+SELECT relname, n_dead_tup FROM pg_stat_user_tables;  --encobtra as TUPLA MORTA - quantidade de registros inúteis
+
+SELECT pg_size_pretty(pg_relation_size('instrutor')); -- mostra o tamanho da tabela.
+
+VACUUM VERBOSE;  --exclui do banco de dados as tuplas mortas.
+
+VACUUM FULL; -- ELIMINA OS ESPAÇOS EM BRANCO DEIXADO PELA EXCLUSÃO DE DADOS 
+
+SELECT * FROM instrutor;
+
+REINDEX TABLE instrutor;
+
+
+DROP TABLE carros;
+DROP TABLE instrutor;
+CREATE TABLE carros (
+    id SERIAL PRIMARY KEY,
+    nome VARCHAR(255) NOT NULL,
+    valor DECIMAL(10, 2)
+);
+
+SELECT COUNT(*) FROM instrutor;
+SELECT * FROM carros;
+DELETE FROM carros;
+
+DO $$
+    DECLARE
+    BEGIN
+        FOR i IN 1..10 LOOP
+            INSERT INTO carros (nome, valor) VALUES ('carro num ' || i, random() * 1000 + 1);
+        END LOOP;
+    END;
+$$;
+
+
+SELECT * FROM carros;
+SELECT * FROM instrutor;
+SELECT * FROM instrutor WHERE salario > 500;
+
+
+EXPLAIN SELECT * FROM instrutor WHERE salario > 500; -- mostra como o postgre faria a query
+                                                     -- que está na frente do EXPLAIN.
+													 --apesenta o custo da query.
+drop index idx_salario;
+CREATE INDEX idx_salario ON instrutor(salario); --cria um indice na tabela intrutor
+                                                --indexando o campo salário.
+
+
+CREATE USER pedro; -- cria um usuário que pode fazer login.
+

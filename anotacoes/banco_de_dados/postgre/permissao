@@ -1,0 +1,11 @@
+CREATE USER super2 PASSWORD '12345'; -- cria um usuáro com senha que pode fazer login. 
+
+SELECT * FROM instrutor; -- privilegio negado;
+
+REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA public FROM super2; --retira todos os privilégos do esquema public do usuário super2;
+
+GRANT SELECT ON instrutor TO super2;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO super2;  -- permite o usuário super2 
+                                                        --a fazer select no schema public
+GRANT INSERT ON ALL TABLES IN SCHEMA public TO super2;  --  permite a inserir dados nas tabelas do eschema public;
+
